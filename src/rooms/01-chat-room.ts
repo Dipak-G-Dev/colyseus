@@ -4,7 +4,7 @@ export class ChatRoom extends Room {
     // this room supports only 4 clients connected
     maxClients = 4;
 
-    onCreate (options: any) {
+    onCreate (options) {
         console.log("ChatRoom created!", options);
 
         this.onMessage("message", (client, message) => {
@@ -13,11 +13,11 @@ export class ChatRoom extends Room {
         });
     }
 
-    onJoin (client: { sessionId: any; }) {
+    onJoin (client) {
         this.broadcast("messages", `${ client.sessionId } joined.`);
     }
 
-    onLeave (client: { sessionId: any; }) {
+    onLeave (client) {
         this.broadcast("messages", `${ client.sessionId } left.`);
     }
 
