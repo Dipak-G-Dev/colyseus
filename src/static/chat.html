@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width" />
+
+    <style>
+      body { font-family: Tahoma, Geneva, sans-serif; }
+    </style>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://unpkg.com/colyseus.js@^0.14.0/dist/colyseus.js"></script>
+
+  </head>
+  <body>
+    <h4 class="text-center mt-2 m-auto">Messages</h4><br>
+
+    <form id="form">
+      <div class="col-md-3 d-flex m-auto">
+      <input class="form-control" type="text" id="input" value="" autofocus/>
+      <input class="btn btn-primary " type="submit" value="send" />
+    </div>
+    </form>
+
+    <div class="text-center mt-2 m-auto" id="messages"></div>
+
+    <script>
+      var host = window.document.location.host.replace(/:.*/, '');
+
+      var client = new Colyseus.Client(location.protocol.replace("http", "ws") + "//" + host + (location.port ? ':'+location.port : ''));
+      client.joinOrCreate("chat").then(room => {
+        console.log("joined");
+        room.onStateChange.once(function(state) {
+            console.log("initial room state:", state);
+        });
+        room.onStateChange(function(state) {
+        });
+        room.onMessage("messages", function(message) {
+            var p = document.createElement("p");
+            p.innerText = message;
+            document.querySelector("#messages").appendChild(p);
+        });
+        document.querySelector("#form").onsubmit = function(e) {
+            e.preventDefault();
+
+            var input = document.querySelector("#input");
+
+            console.log("input:", input.value);
+            room.send("message", input.value);
+            input.value = "";
+        }
+      });
+
+    </script>
+  </body>
+</html>
